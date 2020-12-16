@@ -1,0 +1,454 @@
+
+atmega8-button-game.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000018e  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  000001e2  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000001e2  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000214  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000048  00000000  00000000  00000250  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   00000847  00000000  00000000  00000298  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000597  00000000  00000000  00000adf  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   0000040c  00000000  00000000  00001076  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000074  00000000  00000000  00001484  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    000003b7  00000000  00000000  000014f8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    000003c8  00000000  00000000  000018af  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000038  00000000  00000000  00001c77  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	19 c0       	rjmp	.+50     	; 0x36 <__bad_interrupt>
+   4:	18 c0       	rjmp	.+48     	; 0x36 <__bad_interrupt>
+   6:	17 c0       	rjmp	.+46     	; 0x36 <__bad_interrupt>
+   8:	16 c0       	rjmp	.+44     	; 0x36 <__bad_interrupt>
+   a:	15 c0       	rjmp	.+42     	; 0x36 <__bad_interrupt>
+   c:	14 c0       	rjmp	.+40     	; 0x36 <__bad_interrupt>
+   e:	13 c0       	rjmp	.+38     	; 0x36 <__bad_interrupt>
+  10:	12 c0       	rjmp	.+36     	; 0x36 <__bad_interrupt>
+  12:	11 c0       	rjmp	.+34     	; 0x36 <__bad_interrupt>
+  14:	10 c0       	rjmp	.+32     	; 0x36 <__bad_interrupt>
+  16:	0f c0       	rjmp	.+30     	; 0x36 <__bad_interrupt>
+  18:	0e c0       	rjmp	.+28     	; 0x36 <__bad_interrupt>
+  1a:	0d c0       	rjmp	.+26     	; 0x36 <__bad_interrupt>
+  1c:	0c c0       	rjmp	.+24     	; 0x36 <__bad_interrupt>
+  1e:	0b c0       	rjmp	.+22     	; 0x36 <__bad_interrupt>
+  20:	0a c0       	rjmp	.+20     	; 0x36 <__bad_interrupt>
+  22:	09 c0       	rjmp	.+18     	; 0x36 <__bad_interrupt>
+  24:	08 c0       	rjmp	.+16     	; 0x36 <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+  32:	4b d0       	rcall	.+150    	; 0xca <main>
+  34:	aa c0       	rjmp	.+340    	; 0x18a <_exit>
+
+00000036 <__bad_interrupt>:
+  36:	e4 cf       	rjmp	.-56     	; 0x0 <__vectors>
+
+00000038 <init_ports>:
+void init_ports() {
+	
+	/************************************************************************/
+	/* 1st led row                                                           */
+	/************************************************************************/
+	DDRB = 0xFF;
+  38:	8f ef       	ldi	r24, 0xFF	; 255
+  3a:	87 bb       	out	0x17, r24	; 23
+	PORTB = 0x00;
+  3c:	18 ba       	out	0x18, r1	; 24
+
+	
+	/************************************************************************/
+	/* 2nd led row                                                          */
+	/************************************************************************/
+	DDRD = 0xFF;
+  3e:	81 bb       	out	0x11, r24	; 17
+	PORTD = 0x00;
+  40:	12 ba       	out	0x12, r1	; 18
+	
+	/************************************************************************/
+	/* buttons and led for player 1 and 2                                    */
+	/************************************************************************/
+	DDRC &= ~(1<<BUTTON1);
+  42:	a0 98       	cbi	0x14, 0	; 20
+	DDRC &= ~(1<<BUTTON2);
+  44:	a1 98       	cbi	0x14, 1	; 20
+	DDRC |= 1<<PC2;
+  46:	a2 9a       	sbi	0x14, 2	; 20
+	PORTC |= 1<<BUTTON1; // pull-up resistor on input PC0
+  48:	a8 9a       	sbi	0x15, 0	; 21
+	PORTC |= 1<<BUTTON2; // pull-up resistor on input PC1
+  4a:	a9 9a       	sbi	0x15, 1	; 21
+  4c:	08 95       	ret
+
+0000004e <btn_state_one>:
+	
+}
+
+unsigned char btn_state_one()
+{
+	if (bit_is_clear(PINC, BUTTON1)) {
+  4e:	98 99       	sbic	0x13, 0	; 19
+  50:	08 c0       	rjmp	.+16     	; 0x62 <btn_state_one+0x14>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  52:	8f e1       	ldi	r24, 0x1F	; 31
+  54:	9e e4       	ldi	r25, 0x4E	; 78
+  56:	01 97       	sbiw	r24, 0x01	; 1
+  58:	f1 f7       	brne	.-4      	; 0x56 <btn_state_one+0x8>
+  5a:	00 c0       	rjmp	.+0      	; 0x5c <btn_state_one+0xe>
+  5c:	00 00       	nop
+		_delay_ms(10);
+		return 1;
+  5e:	81 e0       	ldi	r24, 0x01	; 1
+  60:	08 95       	ret
+	}
+	
+	return 0;
+  62:	80 e0       	ldi	r24, 0x00	; 0
+}
+  64:	08 95       	ret
+
+00000066 <btn_state_second>:
+
+unsigned char btn_state_second()
+{
+	if (bit_is_clear(PINC, BUTTON2)) {
+  66:	99 99       	sbic	0x13, 1	; 19
+  68:	08 c0       	rjmp	.+16     	; 0x7a <btn_state_second+0x14>
+  6a:	8f e1       	ldi	r24, 0x1F	; 31
+  6c:	9e e4       	ldi	r25, 0x4E	; 78
+  6e:	01 97       	sbiw	r24, 0x01	; 1
+  70:	f1 f7       	brne	.-4      	; 0x6e <btn_state_second+0x8>
+  72:	00 c0       	rjmp	.+0      	; 0x74 <btn_state_second+0xe>
+  74:	00 00       	nop
+		_delay_ms(10);
+		return 1;
+  76:	81 e0       	ldi	r24, 0x01	; 1
+  78:	08 95       	ret
+	}
+	
+	return 0;
+  7a:	80 e0       	ldi	r24, 0x00	; 0
+}
+  7c:	08 95       	ret
+
+0000007e <indicate_row_A>:
+
+void indicate_row_A()
+{
+	PORTB = 0xAA;
+  7e:	8a ea       	ldi	r24, 0xAA	; 170
+  80:	88 bb       	out	0x18, r24	; 24
+  82:	8f e1       	ldi	r24, 0x1F	; 31
+  84:	9e e4       	ldi	r25, 0x4E	; 78
+  86:	01 97       	sbiw	r24, 0x01	; 1
+  88:	f1 f7       	brne	.-4      	; 0x86 <indicate_row_A+0x8>
+  8a:	00 c0       	rjmp	.+0      	; 0x8c <indicate_row_A+0xe>
+  8c:	00 00       	nop
+	_delay_ms(10);
+	PORTB = 0x00;
+  8e:	18 ba       	out	0x18, r1	; 24
+	PORTB |= ~0xAA;
+  90:	88 b3       	in	r24, 0x18	; 24
+  92:	85 65       	ori	r24, 0x55	; 85
+  94:	88 bb       	out	0x18, r24	; 24
+  96:	8f e1       	ldi	r24, 0x1F	; 31
+  98:	9e e4       	ldi	r25, 0x4E	; 78
+  9a:	01 97       	sbiw	r24, 0x01	; 1
+  9c:	f1 f7       	brne	.-4      	; 0x9a <indicate_row_A+0x1c>
+  9e:	00 c0       	rjmp	.+0      	; 0xa0 <indicate_row_A+0x22>
+  a0:	00 00       	nop
+  a2:	08 95       	ret
+
+000000a4 <indicate_row_B>:
+	_delay_ms(10);
+}
+
+void indicate_row_B()
+{
+	PORTD = 0xAA;
+  a4:	8a ea       	ldi	r24, 0xAA	; 170
+  a6:	82 bb       	out	0x12, r24	; 18
+  a8:	8f e1       	ldi	r24, 0x1F	; 31
+  aa:	9e e4       	ldi	r25, 0x4E	; 78
+  ac:	01 97       	sbiw	r24, 0x01	; 1
+  ae:	f1 f7       	brne	.-4      	; 0xac <indicate_row_B+0x8>
+  b0:	00 c0       	rjmp	.+0      	; 0xb2 <indicate_row_B+0xe>
+  b2:	00 00       	nop
+	_delay_ms(10);
+	PORTD = 0x00;
+  b4:	12 ba       	out	0x12, r1	; 18
+	PORTD |= ~0xAA;
+  b6:	82 b3       	in	r24, 0x12	; 18
+  b8:	85 65       	ori	r24, 0x55	; 85
+  ba:	82 bb       	out	0x12, r24	; 18
+  bc:	8f e1       	ldi	r24, 0x1F	; 31
+  be:	9e e4       	ldi	r25, 0x4E	; 78
+  c0:	01 97       	sbiw	r24, 0x01	; 1
+  c2:	f1 f7       	brne	.-4      	; 0xc0 <indicate_row_B+0x1c>
+  c4:	00 c0       	rjmp	.+0      	; 0xc6 <indicate_row_B+0x22>
+  c6:	00 00       	nop
+  c8:	08 95       	ret
+
+000000ca <main>:
+	_delay_ms(10);
+}
+
+int main(void)
+{
+	init_ports();
+  ca:	b6 df       	rcall	.-148    	; 0x38 <init_ports>
+	
+	uint8_t player_count_one = 0;
+	uint8_t player_count_second = 0;
+	uint8_t player_isPressed_one = 0;
+	uint8_t player_isPressed_second = 0;
+  cc:	00 e0       	ldi	r16, 0x00	; 0
+{
+	init_ports();
+	
+	uint8_t player_count_one = 0;
+	uint8_t player_count_second = 0;
+	uint8_t player_isPressed_one = 0;
+  ce:	10 e0       	ldi	r17, 0x00	; 0
+int main(void)
+{
+	init_ports();
+	
+	uint8_t player_count_one = 0;
+	uint8_t player_count_second = 0;
+  d0:	d0 e0       	ldi	r29, 0x00	; 0
+
+int main(void)
+{
+	init_ports();
+	
+	uint8_t player_count_one = 0;
+  d2:	c0 e0       	ldi	r28, 0x00	; 0
+				PORTB |= 1<<player_count_one;
+				player_count_one++;
+				player_isPressed_one = 1;
+			}
+			} else {
+			player_isPressed_one = 0;
+  d4:	f1 2c       	mov	r15, r1
+			PORTB = 0x00;
+		}
+		
+		if (btn_state_one()) {
+			if (player_isPressed_one == 0) {
+				PORTB |= 1<<player_count_one;
+  d6:	cc 24       	eor	r12, r12
+  d8:	c3 94       	inc	r12
+  da:	d1 2c       	mov	r13, r1
+				player_count_one++;
+				player_isPressed_one = 1;
+  dc:	ee 24       	eor	r14, r14
+  de:	e3 94       	inc	r14
+  e0:	01 c0       	rjmp	.+2      	; 0xe4 <main+0x1a>
+				PORTD |= 1<<player_count_second;
+				player_count_second++;
+				player_isPressed_second = 1;
+			}
+			} else {
+			player_isPressed_second = 0;
+  e2:	0f 2d       	mov	r16, r15
+	uint8_t player_isPressed_one = 0;
+	uint8_t player_isPressed_second = 0;
+	
+	while (1)
+	{
+		if (player_count_one == MAX_LED_COUNT / 2 && player_count_second != MAX_LED_COUNT / 2) {
+  e4:	c8 30       	cpi	r28, 0x08	; 8
+  e6:	09 f0       	breq	.+2      	; 0xea <main+0x20>
+  e8:	4d c0       	rjmp	.+154    	; 0x184 <main+0xba>
+  ea:	d8 30       	cpi	r29, 0x08	; 8
+  ec:	29 f1       	breq	.+74     	; 0x138 <main+0x6e>
+			PORTC |= 1<<PC2;
+  ee:	aa 9a       	sbi	0x15, 2	; 21
+  f0:	c7 e0       	ldi	r28, 0x07	; 7
+			
+			for (uint8_t i = 0; i < 7; i++)
+			{
+				indicate_row_A();
+  f2:	c5 df       	rcall	.-118    	; 0x7e <indicate_row_A>
+  f4:	c1 50       	subi	r28, 0x01	; 1
+	while (1)
+	{
+		if (player_count_one == MAX_LED_COUNT / 2 && player_count_second != MAX_LED_COUNT / 2) {
+			PORTC |= 1<<PC2;
+			
+			for (uint8_t i = 0; i < 7; i++)
+  f6:	e9 f7       	brne	.-6      	; 0xf2 <main+0x28>
+  f8:	2f ef       	ldi	r18, 0xFF	; 255
+  fa:	80 e7       	ldi	r24, 0x70	; 112
+  fc:	92 e0       	ldi	r25, 0x02	; 2
+  fe:	21 50       	subi	r18, 0x01	; 1
+ 100:	80 40       	sbci	r24, 0x00	; 0
+ 102:	90 40       	sbci	r25, 0x00	; 0
+ 104:	e1 f7       	brne	.-8      	; 0xfe <main+0x34>
+ 106:	00 c0       	rjmp	.+0      	; 0x108 <main+0x3e>
+ 108:	00 00       	nop
+			_delay_ms(100);
+			
+			player_count_one = 0;
+			player_count_second = 0;
+			
+			PORTC &= ~(1<<PC2);
+ 10a:	aa 98       	cbi	0x15, 2	; 21
+			PORTB = 0x00;
+ 10c:	18 ba       	out	0x18, r1	; 24
+			PORTD = 0x00;
+ 10e:	12 ba       	out	0x12, r1	; 18
+			}
+			
+			_delay_ms(100);
+			
+			player_count_one = 0;
+			player_count_second = 0;
+ 110:	d0 e0       	ldi	r29, 0x00	; 0
+ 112:	12 c0       	rjmp	.+36     	; 0x138 <main+0x6e>
+			PORTD = 0x00;
+		}
+
+		if (player_count_second == MAX_LED_COUNT / 2 && player_count_one != MAX_LED_COUNT / 2) {
+			
+			PORTC |= 1<<PC2;
+ 114:	aa 9a       	sbi	0x15, 2	; 21
+ 116:	c7 e0       	ldi	r28, 0x07	; 7
+			for (uint8_t i = 0; i < 7; i++)
+			{
+				indicate_row_B();
+ 118:	c5 df       	rcall	.-118    	; 0xa4 <indicate_row_B>
+ 11a:	c1 50       	subi	r28, 0x01	; 1
+		}
+
+		if (player_count_second == MAX_LED_COUNT / 2 && player_count_one != MAX_LED_COUNT / 2) {
+			
+			PORTC |= 1<<PC2;
+			for (uint8_t i = 0; i < 7; i++)
+ 11c:	e9 f7       	brne	.-6      	; 0x118 <main+0x4e>
+ 11e:	2f ef       	ldi	r18, 0xFF	; 255
+ 120:	80 e7       	ldi	r24, 0x70	; 112
+ 122:	92 e0       	ldi	r25, 0x02	; 2
+ 124:	21 50       	subi	r18, 0x01	; 1
+ 126:	80 40       	sbci	r24, 0x00	; 0
+ 128:	90 40       	sbci	r25, 0x00	; 0
+ 12a:	e1 f7       	brne	.-8      	; 0x124 <main+0x5a>
+ 12c:	00 c0       	rjmp	.+0      	; 0x12e <main+0x64>
+ 12e:	00 00       	nop
+			_delay_ms(100);
+			
+			player_count_second = 0;
+			player_count_one = 0;
+			
+			PORTC &= ~(1<<PC2);
+ 130:	aa 98       	cbi	0x15, 2	; 21
+			PORTD = 0x00;
+ 132:	12 ba       	out	0x12, r1	; 18
+			PORTB = 0x00;
+ 134:	18 ba       	out	0x18, r1	; 24
+			{
+				indicate_row_B();
+			}
+			_delay_ms(100);
+			
+			player_count_second = 0;
+ 136:	d0 e0       	ldi	r29, 0x00	; 0
+			PORTC &= ~(1<<PC2);
+			PORTD = 0x00;
+			PORTB = 0x00;
+		}
+		
+		if (btn_state_one()) {
+ 138:	8a df       	rcall	.-236    	; 0x4e <btn_state_one>
+ 13a:	88 23       	and	r24, r24
+ 13c:	79 f0       	breq	.+30     	; 0x15c <main+0x92>
+			if (player_isPressed_one == 0) {
+ 13e:	11 11       	cpse	r17, r1
+ 140:	0e c0       	rjmp	.+28     	; 0x15e <main+0x94>
+				PORTB |= 1<<player_count_one;
+ 142:	28 b3       	in	r18, 0x18	; 24
+ 144:	c6 01       	movw	r24, r12
+ 146:	0c 2e       	mov	r0, r28
+ 148:	02 c0       	rjmp	.+4      	; 0x14e <main+0x84>
+ 14a:	88 0f       	add	r24, r24
+ 14c:	99 1f       	adc	r25, r25
+ 14e:	0a 94       	dec	r0
+ 150:	e2 f7       	brpl	.-8      	; 0x14a <main+0x80>
+ 152:	82 2b       	or	r24, r18
+ 154:	88 bb       	out	0x18, r24	; 24
+				player_count_one++;
+ 156:	cf 5f       	subi	r28, 0xFF	; 255
+				player_isPressed_one = 1;
+ 158:	1e 2d       	mov	r17, r14
+ 15a:	01 c0       	rjmp	.+2      	; 0x15e <main+0x94>
+			}
+			} else {
+			player_isPressed_one = 0;
+ 15c:	1f 2d       	mov	r17, r15
+		}
+		
+		if (btn_state_second()) {
+ 15e:	83 df       	rcall	.-250    	; 0x66 <btn_state_second>
+ 160:	88 23       	and	r24, r24
+ 162:	09 f4       	brne	.+2      	; 0x166 <main+0x9c>
+ 164:	be cf       	rjmp	.-132    	; 0xe2 <main+0x18>
+			if (player_isPressed_second == 0) {
+ 166:	01 11       	cpse	r16, r1
+ 168:	bd cf       	rjmp	.-134    	; 0xe4 <main+0x1a>
+				PORTD |= 1<<player_count_second;
+ 16a:	22 b3       	in	r18, 0x12	; 18
+ 16c:	c6 01       	movw	r24, r12
+ 16e:	0d 2e       	mov	r0, r29
+ 170:	02 c0       	rjmp	.+4      	; 0x176 <main+0xac>
+ 172:	88 0f       	add	r24, r24
+ 174:	99 1f       	adc	r25, r25
+ 176:	0a 94       	dec	r0
+ 178:	e2 f7       	brpl	.-8      	; 0x172 <main+0xa8>
+ 17a:	82 2b       	or	r24, r18
+ 17c:	82 bb       	out	0x12, r24	; 18
+				player_count_second++;
+ 17e:	df 5f       	subi	r29, 0xFF	; 255
+				player_isPressed_second = 1;
+ 180:	0e 2d       	mov	r16, r14
+ 182:	b0 cf       	rjmp	.-160    	; 0xe4 <main+0x1a>
+			PORTC &= ~(1<<PC2);
+			PORTB = 0x00;
+			PORTD = 0x00;
+		}
+
+		if (player_count_second == MAX_LED_COUNT / 2 && player_count_one != MAX_LED_COUNT / 2) {
+ 184:	d8 30       	cpi	r29, 0x08	; 8
+ 186:	c1 f6       	brne	.-80     	; 0x138 <main+0x6e>
+ 188:	c5 cf       	rjmp	.-118    	; 0x114 <main+0x4a>
+
+0000018a <_exit>:
+ 18a:	f8 94       	cli
+
+0000018c <__stop_program>:
+ 18c:	ff cf       	rjmp	.-2      	; 0x18c <__stop_program>
